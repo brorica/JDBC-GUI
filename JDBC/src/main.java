@@ -1,38 +1,28 @@
+import java.awt.FlowLayout;
 import java.sql.*;
 import java.util.Scanner;
 
-import component.SELECT;
-import component.UPDATE;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import component.*;
+import SQL.*;
 
 import javax.swing.*;
 
 public class main {
-	public static Frame frame;
+	public static JFrame frame;
 	public static void main(String args[]) {
 		Scanner scanner = new Scanner(System.in);
-		frame = new Frame();
+		frame = new JFrame();
 		frame.setTitle("Information Retrieval System");
 		frame.setLayout(new FlowLayout());
-		frame.setBounds(500, 100, 400, 400);
-		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		SELECT select = new SELECT(frame);
 		UPDATE update = new UPDATE(frame);
+		DELETE delete = new DELETE(frame);
 		
-		frame.setLayout(null);
+		frame.setSize(1000, 500);
 		frame.setVisible(true);
-		
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				System.exit(0);
-			}
-		});
 
-		/*
 		Connection connect = null;
 		// Get Driver
 		try {
@@ -44,14 +34,16 @@ public class main {
 		// Connect
 		try {
 			String user = "root";
-			String password = "root";
+			String password = "123456";
 			String database = "mydb";
 			String url = "jdbc:mysql://localhost:3306/" + database + "?serverTimezone=UTC";
 			connect = DriverManager.getConnection(url,user,password);
+			SelectSQL SELECT_SQL = new SelectSQL(connect);
 		}catch(SQLException connectError) {
 			System.out.println("connect error : " + connectError);
 			connectError.printStackTrace();
 		}
+		
 		// connect close
 		try {
 			if(connect != null)
@@ -59,7 +51,6 @@ public class main {
 		}catch(SQLException connectCloseError) {
 			System.out.println("connection close error : " + connectCloseError);
 		}
-		*/
 	}
 
 }

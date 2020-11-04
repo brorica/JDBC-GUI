@@ -1,20 +1,16 @@
 package component;
-
 import javax.swing.*;
-
-public class UPDATE {
+public class DELETE {
 	public static JFrame frame;
 	public static JPanel updatePanel;	
-	public UPDATE(JFrame frame)
+	public DELETE(JFrame frame)
 	{
 		UPDATE.frame = frame;
 		updatePanel = new JPanel();	
-		JLabel updateText = new JLabel("새로운 Salary : ");	
-		JTextField textField = new JTextField(20);	
-		JButton updateButton = new JButton("UPDATE");
+		JLabel updateText = new JLabel("선택한 데이터 삭제");	
+		JButton updateButton = new JButton("DELETE");
 		
 		updatePanel.add(updateText);
-		updatePanel.add(textField);
 		updatePanel.add(updateButton);
 		
 		frame.add(updatePanel);
