@@ -1,10 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
- 
+import java.sql.*;
 import javax.swing.table.DefaultTableModel;
  
 public class db {
@@ -80,7 +74,7 @@ public class db {
         } finally {
             dbClose();
         }
-    }//useresultelectAll()
+    }
  
     /**
      * ID에 해당하는 레코드 삭제하기
@@ -104,13 +98,32 @@ public class db {
     /**
      * ID에 해당하는 레코드 수정하기
      * */
-    public int userUpdate(gui user) {
+    public int salaryUpdate(int newSalary) {
         int result = 0;
-        String sql = "UPDATE employee SET Salary=?";
+        System.out.println(newSalary);
+        String sql = "UPDATE employee SET Salary=? where Fname=?";
  
         try {
             preState = connect.prepareStatement(sql);
-            preState.setString(1, user.salary.getText());
+            preState.setInt(1, newSalary);
+            preState.setString(2, "TEST");
+            result = preState.executeUpdate();
+ 
+        } catch (SQLException updateError) {
+            System.out.println(updateError + "=> userUpdate fail");
+        } finally {
+            dbClose();
+        }
+ 
+        return result;
+    }
+    public int deleteEmployee(String ssn) {
+        int result = 0;
+        String sql = "DELETE FROM employee where Ssn=?";
+        System.out.println(ssn);
+        try {
+            preState = connect.prepareStatement(sql);
+            preState.setString(1, ssn);
             result = preState.executeUpdate();
  
         } catch (SQLException updateError) {
@@ -121,36 +134,36 @@ public class db {
  
         return result;
     } 
-    /**
-     * 검색단어에 해당하는 레코드 검색하기 (like연산자를 사용하여 _, %를 사용할때는 PreparedStatemnet안된다. 반드시
-     * Statement객체를 이용함)
-     * */
-    public void getUserSearch(DefaultTableModel dt, String fieldName, String word) {
-    	System.out.println("filed Name : " + fieldName);
-        String sql = "SELECT * FROM employee WHERE " + fieldName.trim()
-                + " LIKE '%" + word.trim() + "%'";
- 
+    public void getUserSearch(DefaultTableModel dt, String fieldName, String[] whereArray) {
+    	int index=0; // where element count
+        String sql = "SELECT ";
+        for(index=0;index<whereArray.length;index++)
+        {
+        	if(whereArray[index] == null)
+        		break;
+        	sql+=whereArray[index];
+        	sql+=',';
+        }
+        sql = sql.substring(0, sql.length() - 1);
+        sql+=" from employee";
+        System.out.println(sql);
         try {
         	state = connect.createStatement();
             result = state.executeQuery(sql);
- 
             // DefaultTableModel에 있는 기존 데이터 지우기
             for (int i = 0; i < dt.getRowCount();) {
                 dt.removeRow(0);
             }
- 
             while (result.next()) {
-                Object data[] = { result.getString(1), result.getString(2),
-                        result.getInt(3), result.getString(4) };
- 
+            	Object data[] = new String[index];
+            	for(int i=1;i<=index;i++)
+            		data[i-1] = result.getString(i);
                 dt.addRow(data);
-            }
- 
+            } 
         } catch (SQLException e) {
             System.out.println(e + "=> getUseresultearch fail");
         } finally {
             dbClose();
         }
     }
- 
 }

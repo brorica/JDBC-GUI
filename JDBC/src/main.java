@@ -1,30 +1,14 @@
-//MenuJTabaleExam.java
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
  
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
  
  
 public class main extends JFrame implements ActionListener {
-    JLabel searchRange = new JLabel("검색 범위");
-    JMenu m = new JMenu("관리");
-    JMenuItem update = new JMenuItem("수정");
-    JMenuItem delete = new JMenuItem("삭제");
-    JMenuBar mb = new JMenuBar();
 
- 
     String[] name = { "fname", "lname", "salary", "addr" };
  
     DefaultTableModel dt = new DefaultTableModel(name, 0);
@@ -36,36 +20,48 @@ public class main extends JFrame implements ActionListener {
      * 여기 버튼식으로 바꾸기
      */
     JPanel p = new JPanel();
+    JPanel updatePanel = new JPanel();
+    
+    JLabel searchRangeLabel = new JLabel("검색 범위");
     String[] comboName = { "전체", "부서별" };
- 
     JComboBox combo = new JComboBox(comboName);
-    JTextField jtf = new JTextField(20);
+    
+    JLabel searchItemLabel = new JLabel("검색 항목");
+    Checkbox fname = new Checkbox("fname");
+    Checkbox lname = new Checkbox("lname");
     JButton serach = new JButton("검색");
+    
+    JLabel SalaryLabel = new JLabel("새로운 Salary : ");
+	JTextField SalaryTextField = new JTextField(20);
+	JButton update = new JButton("UPDATE");
+	
+    JLabel DeleteLabel = new JLabel("선택한 데이터 삭제");
+	JButton delete = new JButton("delete");
  
-    db dao = new db();
+    db db = new db();
  
     /**
      * 화면구성 및 이벤트등록
      */
     public main() {
         //메뉴아이템을 메뉴에 추가
-        m.add(update);
-        m.add(delete);
-        //메뉴를 메뉴바에 추가
-        mb.add(m);
-       
-        //윈도우에 메뉴바 세팅
-        setJMenuBar(mb);
- 
-        p.add(searchRange);
-        // South영역
-        p.setBackground(Color.yellow);
+
+        p.add(searchRangeLabel);
         p.add(combo);
-        p.add(jtf);
+        p.add(searchItemLabel);
+        p.add(fname);
+        p.add(lname);
         p.add(serach);
+
+        updatePanel.add(SalaryLabel);
+        updatePanel.add(SalaryTextField);
+        updatePanel.add(update);
+        updatePanel.add(DeleteLabel);
+        updatePanel.add(delete);
  
         add(jsp, "Center");
-        add(p, "North");
+        add(p, "North"); // 노쓰랜드로! (6코)
+        add(updatePanel,"South");
  
         setSize(500, 400);
         setVisible(true);
@@ -74,11 +70,11 @@ public class main extends JFrame implements ActionListener {
  
         // 이벤트등록
         update.addActionListener(this);
-        delete.addActionListener(this);
         serach.addActionListener(this);
+        delete.addActionListener(this);
  
         // 모든레코드를 검색하여 DefaultTableModle에 올리기
-        dao.userSelectAll(dt);
+        db.userSelectAll(dt);
        
         //첫번행 선택.
         if (dt.getRowCount() > 0)
@@ -98,51 +94,25 @@ public class main extends JFrame implements ActionListener {
      * */
  
     public void actionPerformed(ActionEvent e) {
-    	if (e.getSource() == update) {// 수정 메뉴아이템 클릭
-            new gui(this, "수정");
-        } 
-    	else if (e.getSource() == delete) {// 삭제 메뉴아이템 클릭
-            // 현재 Jtable의 선택된 행과 열의 값을 얻어온다.
-            int row = jt.getSelectedRow();
-            System.out.println("선택행 : " + row);
- 
-            Object obj = jt.getValueAt(row, 0);// 행 열에 해당하는 value
-            System.out.println("값 : " + obj);
- /*
-            if (dao.userDelete(obj.toString()) > 0) {
-                UserJDailogGUI.messageBox(this, "레코드 삭제되었습니다.");
-               
-                //리스트 갱신
-                dao.userSelectAll(dt);
-                if (dt.getRowCount() > 0)
-                    jt.setRowSelectionInterval(0, 0);
- 
-            } else {
-                UserJDailogGUI.messageBox(this, "레코드가 삭제되지 않았습니다.");
-            }
- */
-        }
-        else if (e.getSource() == serach) {// 검색 버튼 클릭
-        // JComboBox에 선택된 value 가져오기
-        String fieldName = combo.getSelectedItem().toString();
-        System.out.println("필드명 " + fieldName);
- 
-            if (fieldName.trim().equals("ALL")) {// 전체검색
-            dao.userSelectAll(dt);
-            if (dt.getRowCount() > 0)
-                jt.setRowSelectionInterval(0, 0);
-        } 
-        else {
-            if (jtf.getText().trim().equals("")) {
-                gui.messageBox(this, "검색단어를 입력해주세요!");
-                jtf.requestFocus();
-            } 
-            else {// 검색어를 입력했을경우
-                dao.getUserSearch(dt, fieldName, jtf.getText());
-                if (dt.getRowCount() > 0)
-                    jt.setRowSelectionInterval(0, 0);
-            }
-        }
+    	String [] whereArray = new String[8];
+    	int index = 0;
+		if (e.getSource() == serach) {// 검색 버튼 클릭
+			// System.out.println(fname.getState());
+			if(fname.getState())
+				whereArray[index++] = "fname";
+			if(lname.getState())
+				whereArray[index++] = "lname";
+			// JComboBox에 선택된 value 가져오기
+			String fieldName = combo.getSelectedItem().toString();
+			db.getUserSearch(dt, fieldName, whereArray);
+		}
+		else if (e.getSource() == update) {// 검색 버튼 클릭
+			int newSalary = Integer.valueOf(SalaryTextField.getText());
+			db.salaryUpdate(newSalary);
+		}
+		else if (e.getSource() == delete) {// 검색 버튼 클릭
+			String ssn = "000000000";
+			db.deleteEmployee(ssn);
+		}
     }
- }
 }
