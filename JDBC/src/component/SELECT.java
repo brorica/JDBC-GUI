@@ -1,7 +1,7 @@
 package component;
 import java.awt.BorderLayout;
+import java.awt.event.*;
 import java.awt.FlowLayout;
-
 import javax.swing.*;
 
 public class SELECT {
@@ -50,5 +50,9 @@ public class SELECT {
 		
 		frame.add(selectPanel);
 		frame.pack();
+	}
+	
+	public void actionPerformed(ActionEvent arg0) {
+		
 	}
 }
