@@ -7,27 +7,24 @@
 <meta charset="EUC-KR">
 <title>Insert title here</title>
 <script>
+// 이 코드 안 본 눈 삽니다
 	function check(box){
-		var names = ['123','124'];
+		var names = [];
 		const name = String(box.value);
-		// if(document.getElementsByTagName('td')[i].attributes[2].value)
-		for(var i = 0; i < document.getElementsByTagName('input').length; i++){
-	        if(document.getElementsByTagName('input')[i].getAttribute('type') == 'checkbox'){
-	            console.log(document.getElementsByTagName('input')[i]);
-	            // 밑에 코드로 체크 돼있으면, td태그 돌면서 document.getElementsByTagName('input')[14].value 사용.
-	            // value값하고 맞는 거 찾음 그거 names 배열에 넣고 출려시켜도 될듯
-	            // document.getElementsByTagName('input')[8].checked 체크 여부 확인	
-	        }
-	    }
-	    /*
-		if(box.checked == true){
-			
-			
-			names.push(document.getElementsByName(name)[0].innerHTML)
-			console.log(names);
-			
-		}			
-	    */
+		// 0 ~ 7 까지는 검색 항목 checkBox여서 패쓰
+		for(var i = 8; i < document.getElementsByTagName('input').length; i++){
+			if( document.getElementsByTagName('input')[i].checked == true ) {
+				var checkedName = document.getElementsByTagName('input')[i].value;
+				
+				for(var j = 0 ; j < document.getElementsByTagName('td').length; j++) {
+					if(document.getElementsByTagName('td')[j].attributes.length > 2) {
+						if(checkedName === document.getElementsByTagName('td')[j].attributes[1].value) {
+							names.push(document.getElementsByTagName('td')[j].attributes[2].value)
+						}
+					}
+		       	}
+			}
+		}
 	    const who = document.getElementById('who');
 		who.innerHTML = names;
 	}
@@ -54,7 +51,7 @@
 <input type="checkbox" checked="checked" name="supervisor"> supervisor
 <input type="checkbox" checked="checked" name="Dname"> department
 <button type="submit" name="method" value="search"> 검색 </button>
-<table width="550" border=1>
+<table width="1000" border=1>
 <%
 	Statement state;
 	PreparedStatement preState;
@@ -247,14 +244,14 @@
 		    	{
 		    		Bdate = result.getString("Bdate");
 		    		%>
-		    		<td width="100"><%=Bdate%></td>
+		    		<td width="200"><%=Bdate%></td>
 		    		<%
 		    	}
 		    	if(column.indexOf("Address") != -1)
 		    	{
 		    		Address = result.getString("Address");
 		    		%>
-		    		<td width="100"><%=Address%></td>
+		    		<td width="300"><%=Address%></td>
 		    		<%
 		    	}
 		    	if(column.indexOf("sex") != -1)
@@ -276,7 +273,7 @@
 		    		supervisor = result.getString("supervisor");
 		    		if(supervisor == null){
 		    		%>
-		    			<td width="100"> </td>
+		    			<td width="150"> </td>
 		    		<%
 		    		}else{
 		    		%> 
