@@ -2,18 +2,11 @@ import java.sql.*;
 import javax.swing.table.DefaultTableModel;
  
 public class db {
-   
-    /**
-     * 필요한 변수선언
-     * */
 	Connection connect;
 	Statement state;
 	PreparedStatement preState;
 	ResultSet result;
  
-    /**
-     * 로드 연결을 위한 생성자
-     * */
     public db() {
 		// Get Driver
 		try {
@@ -35,10 +28,7 @@ public class db {
 			connectnectError.printStackTrace();
 		}
     }
- 
-    /**
-     * DB닫기 기능 메소드
-     * */
+    // db close
     public void dbClose() {
         try {
             if (result != null) 
@@ -51,23 +41,24 @@ public class db {
             System.out.println(closeError + "=> dbClose fail");
         }
     }
-    /**
-     * employee의 모든 레코드 조회
-     * */
-    public void userSelectAll(DefaultTableModel t_model) {
+    // select * from employee;
+    public void userSelectAll(DefaultTableModel dt) {
         try {
+        	int index;
         	state = connect.createStatement();
             result = state.executeQuery("select fname, lname from employee");
  
             // DefaultTableModel에 있는 기존 데이터 지우기
-            for (int i = 0; i < t_model.getRowCount();) {
-                t_model.removeRow(0);
+            for (index = 0; index < dt.getRowCount();) {
+                dt.removeRow(0);
             }
  
             while (result.next()) {
-                Object data[] = { result.getString(1), result.getString(2) };
- 
-                t_model.addRow(data); //DefaultTableModel에 레코드 추가
+            	Object data[] = new String[index+1];
+            	data[0] = false;
+            	for(int i=1;i<=index;i++)
+            		data[i] = result.getString(i);
+                dt.addRow(data);
             }
         } catch (SQLException e) {
             System.out.println(e + "=> useresultelectAll fail");
@@ -75,66 +66,8 @@ public class db {
             dbClose();
         }
     }
- 
-    /**
-     * ID에 해당하는 레코드 삭제하기
-     * */
-    public int userDelete(String id) {
-        int result = 0;
-        try {
-            preState = connect.prepareStatement("delete employee where ssn = ? ");
-            preState.setString(1, id.trim());
-            result = preState.executeUpdate();
- 
-        } catch (SQLException e) {
-            System.out.println(e + "=> userDelete fail");
-        }finally {
-            dbClose();
-        }
- 
-        return result;
-    }//userDelete()
- 
-    /**
-     * ID에 해당하는 레코드 수정하기
-     * */
-    public int salaryUpdate(int newSalary) {
-        int result = 0;
-        System.out.println(newSalary);
-        String sql = "UPDATE employee SET Salary=? where Fname=?";
- 
-        try {
-            preState = connect.prepareStatement(sql);
-            preState.setInt(1, newSalary);
-            preState.setString(2, "TEST");
-            result = preState.executeUpdate();
- 
-        } catch (SQLException updateError) {
-            System.out.println(updateError + "=> userUpdate fail");
-        } finally {
-            dbClose();
-        }
- 
-        return result;
-    }
-    public int deleteEmployee(String ssn) {
-        int result = 0;
-        String sql = "DELETE FROM employee where Ssn=?";
-        System.out.println(ssn);
-        try {
-            preState = connect.prepareStatement(sql);
-            preState.setString(1, ssn);
-            result = preState.executeUpdate();
- 
-        } catch (SQLException updateError) {
-            System.out.println(updateError + "=> userUpdate fail");
-        } finally {
-            dbClose();
-        }
- 
-        return result;
-    } 
-    public void getUserSearch(DefaultTableModel dt, String fieldName, String[] whereArray) {
+    // 일부 검색
+    public void employeeSearch(DefaultTableModel dt, String fieldName, String[] whereArray) {
     	int index=0; // where element count
         String sql = "SELECT ";
         for(index=0;index<whereArray.length;index++)
@@ -155,9 +88,9 @@ public class db {
                 dt.removeRow(0);
             }
             while (result.next()) {
-            	Object data[] = new String[index];
+            	Object data[] = new String[index+1];
             	for(int i=1;i<=index;i++)
-            		data[i-1] = result.getString(i);
+            		data[i] = result.getString(i);
                 dt.addRow(data);
             } 
         } catch (SQLException e) {
@@ -165,5 +98,42 @@ public class db {
         } finally {
             dbClose();
         }
+    }
+    // Salary 변경
+    public int salaryUpdate(int newSalary) {
+        int result = 0;
+        System.out.println(newSalary);
+        String sql = "UPDATE employee SET Salary=? where Fname=?";
+ 
+        try {
+            preState = connect.prepareStatement(sql);
+            preState.setInt(1, newSalary);
+            preState.setString(2, "TEST");
+            result = preState.executeUpdate();
+ 
+        } catch (SQLException updateError) {
+            System.out.println(updateError + "=> userUpdate fail");
+        } finally {
+            dbClose();
+        }
+ 
+        return result;
+    }
+    // ssn 보고 값 삭제
+    public int employeeDelete(String ssn) {
+        int result = 0;
+        String sql = "DELETE FROM employee where Ssn=?";
+        System.out.println(ssn);
+        try {
+            preState = connect.prepareStatement(sql);
+            preState.setString(1, ssn);
+            result = preState.executeUpdate();
+ 
+        } catch (SQLException updateError) {
+            System.out.println(updateError + "=> userUpdate fail");
+        } finally {
+            dbClose();
+        }
+        return result;
     }
 }
