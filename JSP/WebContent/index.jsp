@@ -6,6 +6,32 @@
 <head>
 <meta charset="EUC-KR">
 <title>Insert title here</title>
+<script>
+	function check(box){
+		var names = ['123','124'];
+		const name = String(box.value);
+		// if(document.getElementsByTagName('td')[i].attributes[2].value)
+		for(var i = 0; i < document.getElementsByTagName('input').length; i++){
+	        if(document.getElementsByTagName('input')[i].getAttribute('type') == 'checkbox'){
+	            console.log(document.getElementsByTagName('input')[i]);
+	            // 밑에 코드로 체크 돼있으면, td태그 돌면서 document.getElementsByTagName('input')[14].value 사용.
+	            // value값하고 맞는 거 찾음 그거 names 배열에 넣고 출려시켜도 될듯
+	            // document.getElementsByTagName('input')[8].checked 체크 여부 확인	
+	        }
+	    }
+	    /*
+		if(box.checked == true){
+			
+			
+			names.push(document.getElementsByName(name)[0].innerHTML)
+			console.log(names);
+			
+		}			
+	    */
+	    const who = document.getElementById('who');
+		who.innerHTML = names;
+	}
+</script>
 </head>
 <body>
 
@@ -292,25 +318,6 @@
 <button type="submit" name="method" value="delete"> delete </button>
 </table>
 </form>
-<script>
-	function check(box){
-		var names = [];
-		const name = String(box.value);
-	
-		for(var i = 0; i < document.getElementsByTagName('td').length; i++){
-	        if(document.getElementsByTagName('input')[i].getAttribute('type') == 'checkbox'){
-	            console.log(document.getElementsByTagName('input')[i].n);
-	        }
-	    }
-	    
-		if(box.checked == true){
-			
-			const who = document.getElementById('who');
-			names.push(document.getElementsByName(name)[0].innerHTML)
-			console.log(names);
-			who.innerHTML = names;
-		}			
-	}
-</script>
+
 </body>
 </html>
